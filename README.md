@@ -20,7 +20,10 @@ To start the debugger, run this command from inside the `vendetta-debug` folder:
 ```bash
 node .
 ```
-// continue later
+
+## Connecting
+
+tbd
 
 ## Quitting
 
