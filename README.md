@@ -4,11 +4,10 @@ A fork of @colin273/enmity-debugger, which is a (relatively) simple remote debug
 
 ## Installing
 
-To install this debugger and its dependencies, run the following commands in the terminal:
+To install this debugger and its dependencies, run the following command in the terminal:
 
 ```bash
-git clone https://github.com/Meqativ/vendetta-debug && cd vendetta-debug
-pnpm i
+git clone https://github.com/Meqativ/vendetta-debug && cd vendetta-debug && pnpm i
 ```
 
 (The dependencies are minimal, by the way. The only third-party modules this debugger needs are `ws` for the websocket server and `ansi-colors` to make the console output look prettier. Neither of those have any dependencies of their own.)
