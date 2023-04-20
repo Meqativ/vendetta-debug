@@ -2,7 +2,13 @@ import { hostname } from "os";
 import repl from "repl";
 import { WebSocketServer } from "ws";
 import colors from "ansi-colors";
+import { parseArgs } from "util"
 const { cyan, red, yellow, bold: { magenta } } = colors;
+
+const silentLvl = process.argv[2]?.startsWith("shh") ? ((process.argv[2].slice(3).split('').every(c=>c==='h') && process.argv[2].slice(3).split('').length > 0) ? 2 : 1) : 0
+const wssPort = 9090
+
+
 
 let isPrompting = false;
 
@@ -25,12 +31,12 @@ const discordColorize = (data) => {
       message = red(message);
       break;
   }
-  return colorize(message, "Discord", magenta);
+  return colorize(message, "Vendetta", cyan);
 };
-const discordLog = (data) => safeLog(discordColorize(data));
+const discordLog = (data) => safeLog((silentLvl === 2) ? data : discordColorize(data));
 
 const debuggerColorize = (data) => colorize(data, "Debugger", magenta);
-const debuggerLog = (data) => safeLog(debuggerColorize(data));
+const debuggerLog = (data) => safeLog((silentLvl === 2) ? data : debuggerColorize(data));
 const debuggerError = (err, isReturning) => {
   safeLog(colorize(red("Error"), "Debugger", red.bold));
   if (isReturning) {
@@ -41,19 +47,19 @@ const debuggerError = (err, isReturning) => {
 
 
 // Display welcome message and basic instructions
-console.log(
+if (silentLvl < 1) console.log(
 		"Welcome to the unofficial Vendetta debugger.\n"+
 		"Press Ctrl+C to exit.\n"+
 		"Check README.md for a guide on how to connect to the debugger."
 );
 
 // Create websocket server and REPL, and wait for connection
-const wss = new WebSocketServer({ port: 9090 });
+const wss = new WebSocketServer({ port: wssPort });
 wss.on("listening", (ws) => {
-	debuggerLog(`Listening for connections on port ${wss.address().port}`);
+	if (silentLvl < 2) debuggerLog(`Listening for connections on port ${wss.address().port}`);
 })
 wss.on("connection", (ws) => {
-  debuggerLog("Connected to Discord over websocket, starting debug session");
+  if (silentLvl < 2) debuggerLog("Connected to Discord over websocket, starting debug session");
 
   isPrompting = false; // REPL hasn't been created yet
   let finishCallback;
@@ -82,8 +88,8 @@ wss.on("connection", (ws) => {
           cb();
         } else {
           isPrompting = false;
-          ws.send(input);
-          finishCallback = cb;
+					ws.send(`const res=(0, eval)(${JSON.stringify(input)});let out=vendetta.metro.findByProps("inspect").inspect(res,{showHidden:true});if(out!=="undefined")console.log(out);res`); // Logs out the returned value
+					finishCallback = cb;
         }
       } catch (e) {
         cb(e);
@@ -97,11 +103,11 @@ wss.on("connection", (ws) => {
   isPrompting = true; // Now the REPL exists and is prompting the user for input
   
   rl.on("close", () => {
-    debuggerLog("Closing debugger, press Ctrl+C to exit");
+    if (silentLvl < 2) debuggerLog("Closing debugger, press Ctrl+C to exit");
   });
 
   ws.on("close", () => {
-    debuggerLog("Websocket has been closed");
+    if (silentLvl < 2) debuggerLog("Websocket has been closed");
     isPrompting = false;
     rl.close();
   });
