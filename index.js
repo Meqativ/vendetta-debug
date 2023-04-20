@@ -50,8 +50,7 @@ const debuggerError = (err, isReturning) => {
 if (silentLvl < 1) console.log(
 		"Welcome to the unofficial Vendetta debugger.\n"+
 		"Press Ctrl+C to exit.\n"+
-		"How to connect to the debugger\n"+
-	"	https://github.com/Meqativ/vendetta-debug/blob/master/README.md#connecting"
+		"How to connect to the debugger: https://github.com/Meqativ/vendetta-debug/blob/master/README.md#connecting"
 );
 
 // Create websocket server and REPL, and wait for connection
