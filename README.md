@@ -23,13 +23,20 @@ node .
 
 ## Connecting
 
-0. Make sure you have the Vendetta developer options enabled.
+<details>
 
-    1. Open the you tab
-    2. Locate and press the button to open the "General" page
-    ![A screenshot with highlights for steps 1 & 2](readmeAssets/General.png)
-    3. Locate and enable "Developer Settings"
-    ![A screenshot with highlights for step 3](readmeAssets/Developer_Settings.png)
+<summary> 0. Make sure you have the Vendetta developer options enabled. </summary>
+
+---
+1. Open the you tab
+2. Locate and press the button to open the "General" page
+![A screenshot with highlights for steps 1 & 2](readmeAssets/General.png)
+3. Locate and enable "Developer Settings"
+![A screenshot with highlights for step 3](readmeAssets/Developer_Settings.png)</br>
+---
+
+</details>
+
 1. Open the Developer page
 ![A screenshot with highlights for step 2](readmeAssets/Developer.png)
 2. Fill in your Debug URL
