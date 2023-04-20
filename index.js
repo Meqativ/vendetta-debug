@@ -2,7 +2,7 @@ import { hostname } from "os";
 import repl from "repl";
 import { WebSocketServer } from "ws";
 import colors from "ansi-colors";
-const { cyan, red, yellow, bold: { blue } } = colors;
+const { cyan, red, yellow, bold: { magenta } } = colors;
 
 let isPrompting = false;
 
@@ -25,11 +25,11 @@ const discordColorize = (data) => {
       message = red(message);
       break;
   }
-  return colorize(message, "Discord", blue);
+  return colorize(message, "Discord", magenta);
 };
 const discordLog = (data) => safeLog(discordColorize(data));
 
-const debuggerColorize = (data) => colorize(data, "Debugger", blue);
+const debuggerColorize = (data) => colorize(data, "Debugger", magenta);
 const debuggerLog = (data) => safeLog(debuggerColorize(data));
 const debuggerError = (err, isReturning) => {
   safeLog(colorize(red("Error"), "Debugger", red.bold));
@@ -41,22 +41,23 @@ const debuggerError = (err, isReturning) => {
 
 
 // Display welcome message and basic instructions
-console.log("Welcome to the unofficial Enmity debugger.")
-console.log("Press Ctrl+C to exit.")
-console.log(`Connect to this debugger from Discord on your iOS device
-by typing the following slash command in the chat box:
-
-  /websocket host:${hostname()}:9090
-`);
+console.log(
+		"Welcome to the unofficial Vendetta debugger.\n"+
+		"Press Ctrl+C to exit.\n"+
+		"Check README.md for a guide on how to connect to the debugger."
+);
 
 // Create websocket server and REPL, and wait for connection
 const wss = new WebSocketServer({ port: 9090 });
+wss.on("listening", (ws) => {
+	debuggerLog(`Listening for connections on port ${wss.address().port}`);
+})
 wss.on("connection", (ws) => {
   debuggerLog("Connected to Discord over websocket, starting debug session");
 
   isPrompting = false; // REPL hasn't been created yet
   let finishCallback;
-
+	
   // Handle logs returned from Discord client via the websocket
   ws.on("message", (data) => {
     try {
@@ -105,5 +106,3 @@ wss.on("connection", (ws) => {
     rl.close();
   });
 });
-
-debuggerLog("Ready to connect");
