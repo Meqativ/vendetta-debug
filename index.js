@@ -3,13 +3,23 @@ import repl from "repl";
 import { WebSocketServer } from "ws";
 import colors from "ansi-colors";
 import { parseArgs } from "util";
-const {
+/*const {
 	cyan,
 	red,
 	yellow,
 	bold: { magenta },
-} = colors;
-
+} = colors;*/
+const COLORS = {
+	client: {
+		info: colors.cyan,
+		error: colors.red,
+		warning: colors.yellow,
+	},
+	debugger: {
+		info: colors.magenta.bold,
+		error: colors.red.bold,
+	},
+};
 const args = parseArgs({
 	strict: false,
 	options: {
@@ -18,45 +28,50 @@ const args = parseArgs({
 	},
 });
 
+// Parse arguments
 const silentLvl = Number(args?.values?.silent ?? 0);
-if (Number.isNaN(silentLvl)) throw new Error("The option \"silent\" should be a number.")
-if (silentLvl > 2 || silentLvl < 0) throw new Error("The option \"silent\" should in range 0-2.")
+if (Number.isNaN(silentLvl))
+	throw new Error('The option "silent" should be a number.');
+if (silentLvl > 2 || silentLvl < 0)
+	throw new Error('The option "silent" should in range 0-2.');
 
 const wssPort = Number(args?.values?.port ?? 9090);
-if (Number.isNaN(wssPort)) throw new Error("The option \"port\" should be a number.")
-
+if (Number.isNaN(wssPort))
+	throw new Error('The option "port" should be a number.');
 
 let isPrompting = false;
 
 // Utility functions for more visually pleasing logs
 // Get out of user input area first if prompt is currently being shown
-const colorize = (data, source, color) => color(`[${source}] `) + data;
+const colorise = (data, source, color) => color(`[${source}] `) + data;
 const safeLog = (data) => console.log((isPrompting ? "\n" : "") + data);
 
-const discordColorize = (data) => {
+const discordColorise = (data) => {
 	let { message, level } = JSON.parse(data);
 	// Normal logs don't need extra colorization
 	switch (level) {
 		case 0: // Info
-			message = cyan(message);
+			message = COLORS.client.info(message);
 			break;
 		case 2: // Warning
-			message = yellow(message);
+			message = COLORS.client.warning(message);
 			break;
 		case 3: // Error
-			message = red(message);
+			message = COLORS.client.error(message);
 			break;
 	}
-	return colorize(message, "Vendetta", cyan);
+	return colorise(message, "Vendetta", COLORS.client.info);
 };
 const discordLog = (data) =>
-	safeLog(silentLvl === 2 ? data : discordColorize(data));
+	safeLog(silentLvl === 2 ? data : discordColorise(data));
 
-const debuggerColorize = (data) => colorize(data, "Debugger", magenta);
+const debuggerColorise = (data) =>
+	colorise(data, "Debugger", COLORS.debugger.info);
+
 const debuggerLog = (data) =>
-	safeLog(silentLvl === 2 ? data : debuggerColorize(data));
+	safeLog(silentLvl === 2 ? data : debuggerColorise(data));
 const debuggerError = (err, isReturning) => {
-	safeLog(colorize(red("Error"), "Debugger", red.bold));
+	safeLog(colorise("Error", "Debugger", COLORS.debugger.error));
 	if (isReturning) {
 		return err;
 	}
@@ -122,7 +137,7 @@ wss.on("connection", (ws) => {
 		writer: (data) => {
 			return data instanceof Error
 				? debuggerError(data, true)
-				: discordColorize(data);
+				: discordColorise(data);
 		},
 	});
 
