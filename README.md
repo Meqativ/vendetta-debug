@@ -20,6 +20,8 @@ To start the debugger, run this command from inside the `vendetta-debug` folder:
 node .
 ```
 
+For help on arguments, `--help` or [see the docs](args.md).
+
 ## Connecting
 
 <details>
