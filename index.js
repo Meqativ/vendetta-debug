@@ -75,7 +75,7 @@ if (args?.values.help || args?.values?.h) {
 	} catch (err) {
 		console.error(
 			"For the help, you need the optional dependencies.\n" +
-				"Install them by executing 'npm i'"
+				"Install them by executing 'npm i --include=optional' in the folder of the debugger"
 		);
 	}
 	process.exit();
