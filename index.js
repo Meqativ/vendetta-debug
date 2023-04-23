@@ -1,9 +1,26 @@
+
+// Suppress Node.js warning about experimental fetch API
+// Ref: https://github.com/nodejs/node/issues/30810#issuecomment-1383184769
+const originalEmit = process.emit;
+process.emit = function (event, error) {
+  if (
+    event === 'warning' &&
+    error.name === 'ExperimentalWarning' &&
+    error.message.includes('Importing JSON modules is an experimental feature and might change at any time')
+  ) {
+    return false;
+  }
+
+  return originalEmit.apply(process, arguments);
+};
+
 import { hostname } from "os";
 import repl from "repl";
 import { WebSocketServer } from "ws";
 import colors from "ansi-colors";
 import { parseArgs } from "util";
 import * as fs from "fs";
+import defaults from "./defaults.json" assert {type:"json"}
 
 const COLORS = {
 	client: {
@@ -19,9 +36,9 @@ const COLORS = {
 const args = parseArgs({
 	options: {
 		h: { type: "boolean" },
-		silent: { type: "string" },
-		port: { type: "string", default: "9090" },
-		onConnectedPath: { type: "string" },
+		silent: { type: "string", default: `${defaults?.silent}` },
+		port: { type: "string", default: `${defaults?.port}` ?? "9090" },
+		onConnectedPath: { type: "string", default: defaults?.onConnectedPath },
 		help: { type: "boolean", default: false },
 	},
 });

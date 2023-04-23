@@ -40,3 +40,7 @@ console.log("hai")
 ```
 
 </details>
+
+# Change defaults
+You can change the default values of options by editing `defaults.json`.
+(Note: don't remove the quotes in the number options)
