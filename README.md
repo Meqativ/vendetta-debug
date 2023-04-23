@@ -11,7 +11,11 @@ git clone https://github.com/Meqativ/vendetta-debug && cd vendetta-debug
 
 2. Install the dependencies
 ```bash
-npm i --no-optional
+npm i --omit=optional
+```
+or, if you want `--help` and 22 more packages:
+```bash
+npm i --include=optional
 ```
 
 ## Running
