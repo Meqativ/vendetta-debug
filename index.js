@@ -1,26 +1,35 @@
-
 // Suppress Node.js warning about experimental fetch API
 // Ref: https://github.com/nodejs/node/issues/30810#issuecomment-1383184769
 const originalEmit = process.emit;
 process.emit = function (event, error) {
-  if (
-    event === 'warning' &&
-    error.name === 'ExperimentalWarning' &&
-    error.message.includes('Importing JSON modules is an experimental feature and might change at any time')
-  ) {
-    return false;
-  }
+	if (
+		event === "warning" &&
+		error.name === "ExperimentalWarning" &&
+		error.message.includes(
+			"Importing JSON modules is an experimental feature and might change at any time"
+		)
+	) {
+		return false;
+	}
 
-  return originalEmit.apply(process, arguments);
+	return originalEmit.apply(process, arguments);
 };
-
+let WebSocketServer, colors;
+try {
+	WebSocketServer = (await import("ws")).WebSocketServer;
+	colors = (await import("ansi-colors")).default;
+} catch (err) {
+	console.error(
+		"You forgot to install the dependencies.\n" +
+			"https://github.com/Meqativ/vendetta-debug#installing"
+	);
+	process.exit(1);
+}
 import { hostname } from "os";
 import repl from "repl";
-import { WebSocketServer } from "ws";
-import colors from "ansi-colors";
 import { parseArgs } from "util";
 import * as fs from "fs";
-import defaults from "./defaults.json" assert {type:"json"}
+import defaults from "./defaults.json" assert { type: "json" };
 
 const COLORS = {
 	client: {
