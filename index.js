@@ -3,12 +3,8 @@ import repl from "repl";
 import { WebSocketServer } from "ws";
 import colors from "ansi-colors";
 import { parseArgs } from "util";
-/*const {
-	cyan,
-	red,
-	yellow,
-	bold: { magenta },
-} = colors;*/
+import * as fs from "fs";
+
 const COLORS = {
 	client: {
 		info: colors.cyan,
@@ -25,6 +21,7 @@ const args = parseArgs({
 	options: {
 		silent: { type: "string" },
 		port: { type: "string", default: "9090" },
+		onConnectedPath: { type: "string" },
 	},
 });
 
@@ -38,6 +35,11 @@ if (silentLvl > 2 || silentLvl < 0)
 const wssPort = Number(args?.values?.port ?? 9090);
 if (Number.isNaN(wssPort))
 	throw new Error('The option "port" should be a number.');
+
+const onConnectedPath = args?.values?.onConnectedPath;
+let onConnectedCode = undefined;
+if (typeof onConnectedPath !== "undefined")
+	onConnectedCode = await fs.promises.readFile(onConnectedPath, "utf-8");
 
 let isPrompting = false;
 
@@ -140,7 +142,6 @@ wss.on("connection", (ws) => {
 				: discordColorise(data);
 		},
 	});
-
 	isPrompting = true; // Now the REPL exists and is prompting the user for input
 
 	rl.on("close", () => {
@@ -152,4 +153,5 @@ wss.on("connection", (ws) => {
 		isPrompting = false;
 		rl.close();
 	});
+	if (onConnectedCode) ws.send(onConnectedCode);
 });
