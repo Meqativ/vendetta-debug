@@ -28,7 +28,7 @@ For help on arguments, `--help` or [see the docs](args.md).
 
 <details>
 
-<summary> 0. Make sure you have the Vendetta developer options enabled. </summary>
+<summary> 0. Make sure you have the Vendetta developer settings enabled. </summary>
 
 ---
 1. Open the you tab
@@ -50,6 +50,7 @@ For help on arguments, `--help` or [see the docs](args.md).
 
 ### Auto-connect
 You can use an option in the devkitplus ([Direct](https://vd-plugins.github.io/proxy/redstonekasi.github.io/vendetta-plugins/devkitplus/) | [Vendetta › #plugins › 💬](https://discord.com/channels/1015931589865246730/1092870826145091655)) plugin, to connect when Vendetta loads up.
+
 0. Install the plugin
 1. Open the plugin's settings
 2. Enable "Auto debugger"
