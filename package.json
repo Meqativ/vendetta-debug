@@ -1,12 +1,15 @@
 {
-   "name": "enmity-debug",
-   "version": "2.1.0",
-   "description": "Provides a console for debugging Enmity over a websocket.",
+   "name": "vendetta-debug",
+   "version": "3.0.0",
+   "description": "Provides a console for debugging Vendetta over a websocket.",
    "type": "module",
-   "author": "FifiTheBulldog",
+   "author": "Meqativ",
    "license": "MIT",
    "dependencies": {
       "ansi-colors": "^4.1.3",
       "ws": "^8.13.0"
+   },
+   "optionalDependencies": {
+      "command-line-usage": "^7.0.1"
    }
 }
