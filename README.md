@@ -13,7 +13,7 @@ git clone https://github.com/Meqativ/vendetta-debug && cd vendetta-debug
 ```bash
 npm i --omit=optional
 ```
-or, if you want `--help` and 22 more packages:
+or, if you want `--help` and 21 more packages:
 ```bash
 npm i --include=optional
 ```
