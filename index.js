@@ -17,13 +17,69 @@ const COLORS = {
 	},
 };
 const args = parseArgs({
-	strict: false,
 	options: {
+		h: { type: "boolean" },
 		silent: { type: "string" },
 		port: { type: "string", default: "9090" },
 		onConnectedPath: { type: "string" },
+		help: { type: "boolean", default: false },
 	},
 });
+if (args?.values.help || args?.values?.h) {
+	let cmdlu;
+	try {
+		cmdlu = (await import("command-line-usage")).default;
+		console.log(
+			cmdlu([
+				{
+					header: "Vendetta Debugger",
+					content:
+						"A fork of @colin273/enmity-debugger, which is a remote debugger for Vendetta. This connects over a websocket to the Discord app with Vendetta installed and allows you to execute JavaScript in the Discord app from the command line. The REPL in this debugger is a slightly modified version of the default REPL in Node.js, including the same commands and some support for multi-line code snippets. bla bla bla",
+				},
+				{
+					header: "Options",
+					optionList: [
+						{
+							name: "help",
+							alias: "h",
+							description: "Shows,, this.",
+							type: Boolean,
+						},
+						{
+							name: "silent",
+							typeLabel: "{underline level} (0-2)",
+							type: String,
+							description:
+								"Level of silency for the output.\n" +
+								"0: none (default)\n" +
+								"1: hides the welcome message\n" +
+								"2: hides logs from the debugger too",
+						},
+						{
+							name: "port",
+							typeLabel: "{underline number}",
+							type: Number,
+							description: "Port on which to run the websocket.",
+						},
+						{
+							name: "onConnectedPath",
+							typeLabel: "{underline filePath}",
+							type: String,
+							description:
+								"Path to the file with javascript code that will be sent to the clien t on every connection.",
+						},
+					],
+				},
+			])
+		);
+	} catch (err) {
+		console.error(
+			"For the help, you need the optional dependencies.\n" +
+				"Install them by executing 'npm i'"
+		);
+	}
+	process.exit();
+}
 
 // Parse arguments
 const silentLvl = Number(args?.values?.silent ?? 0);
