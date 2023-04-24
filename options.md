@@ -6,7 +6,8 @@
 
 ## --silent __level__ (0-2)
 > Level of silency for the output. <br/>
-> `0`: none (default) <br/>
+> Default: 0
+> `0`: none<br/>
 > `1`: hides the welcome message <br/>
 > `2`: hides logs from the debugger too <br/>
 <details> 
@@ -18,6 +19,7 @@
 </details>
 
 ## --port __number__
+> Default: 9090
 > Port on which to run the websocket.
 <details> 
 
@@ -28,6 +30,7 @@
 </details>
 
 ## --onConnectedPath __filePath__
+> Default: ""
 > Path to the file with javascript code that will be sent to the client on every connection.
 <details> 
 

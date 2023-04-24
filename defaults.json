@@ -1,5 +1,5 @@
 {
-	"onConnectionPath": "",
+	"onConnectedPath": "",
 	"port": 6969,
 	"silent": 0
 }
