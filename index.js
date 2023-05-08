@@ -28,7 +28,7 @@ try {
 import { hostname } from "os";
 import repl from "repl";
 import { parseArgs } from "util";
-import * as fs from "fs";
+import * as fs from "fs/promises";
 import defaults from "./defaults.json" assert { type: "json" };
 
 const COLORS = {
@@ -120,9 +120,14 @@ if (Number.isNaN(wssPort))
 
 const onConnectedPath = args?.values?.onConnectedPath;
 let onConnectedCode = undefined;
-if (typeof onConnectedPath !== "undefined")
+if (typeof onConnectedPath !== "undefined" && onConnectedPath !== "") {
+	await fs.access(onConnectedPath, fs.constants.R_OK).catch((e) => {
+		console.log(`The path in "onConnectedPath" is not accessible`);
+		console.error(e);
+		process.exit(e.errno)
+	});
 	onConnectedCode = await fs.promises.readFile(onConnectedPath, "utf-8");
-
+}
 let isPrompting = false;
 
 // Utility functions for more visually pleasing logs
