@@ -34,14 +34,16 @@ import defaults from "./defaults.json" assert { type: "json" };
 const COLORS = {
 	client: {
 		info: colors.cyan,
-		error: colors.red,
 		warning: colors.yellow,
+		error: colors.red,
 	},
 	debugger: {
 		info: colors.magenta.bold,
+		warning: colors.yellow.bold,
 		error: colors.red.bold,
 	},
 };
+let isPrompting = false;
 const args = parseArgs({
 	options: {
 		h: { type: "boolean" },
@@ -55,56 +57,15 @@ if (args?.values.help || args?.values?.h) {
 	let cmdlu;
 	try {
 		cmdlu = (await import("command-line-usage")).default;
-		console.log(
-			cmdlu([
-				{
-					header: "Vendetta Debugger",
-					content:
-						"A fork of @colin273/enmity-debugger, which is a remote debugger for Vendetta. This connects over a websocket to the Discord app with Vendetta installed and allows you to execute JavaScript in the Discord app from the command line. The REPL in this debugger is a slightly modified version of the default REPL in Node.js, including the same commands and some support for multi-line code snippets",
-				},
-				{
-					header: "Options",
-					optionList: [
-						{
-							name: "help",
-							alias: "h",
-							description: "Shows the text you're reading right now",
-							type: Boolean,
-						},
-						{
-							name: "silent",
-							typeLabel: "{underline level} (int, 0-2)",
-							type: String,
-							description:
-								"Level of silency for the output\n" +
-								"0: none (default)\n" +
-								"1: hides the welcome message\n" +
-								"2: hides logs from the debugger",
-						},
-						{
-							name: "port",
-							typeLabel: "{underline port} (int, 1-65535)",
-							type: Number,
-							description: "Port on which to run the websocket",
-						},
-						{
-							name: "onConnectedPath",
-							typeLabel: "{underline file_path} (string)",
-							type: String,
-							description:
-								"Path to the file with javascript code, that will be sent to the client on every connection",
-						},
-					],
-				},
-			])
-		);
+		const { generate } = (await import("./help.js"))
+		console.log(generate(cmdlu))
 	} catch (err) {
 		console.error(
 			"For the help, you need the optional dependencies.\n" +
 				"Install them by executing 'npm i --include=optional' in the folder of the debugger"
 		);
 	}
-	process.exit();
+	process.exit(0);
 }
 
 // Parse arguments
@@ -124,18 +85,22 @@ if (typeof onConnectedPath !== "undefined" && onConnectedPath !== "") {
 	await fs.access(onConnectedPath, fs.constants.R_OK).catch((e) => {
 		console.log(`The path in "onConnectedPath" is not accessible`);
 		console.error(e);
-		process.exit(e.errno)
+		process.exit(e.errno);
 	});
-	onConnectedCode = await fs.promises.readFile(onConnectedPath, "utf-8");
+	onConnectedCode = await fs.readFile(onConnectedPath, "utf-8");
+	if (onConnectedCode === "") debuggerWarning(`The file in "onConnectedPath" is empty`);
 }
-let isPrompting = false;
 
 // Utility functions for more visually pleasing logs
 // Get out of user input area first if prompt is currently being shown
-const colorise = (data, source, color) => color(`[${source}] `) + data;
-const safeLog = (data) => console.log((isPrompting ? "\n" : "") + data);
+function colorise(message, source, color) {
+	return color(`[${source}] `) + message;
+}
+function safeLog(data) {
+	console.log((isPrompting ? "\n" : "") + data);
+}
 
-const discordColorise = (data) => {
+function discordColorise(data) {
 	let { message, level } = JSON.parse(data);
 	// Normal logs don't need extra colorization
 	switch (level) {
@@ -150,22 +115,27 @@ const discordColorise = (data) => {
 			break;
 	}
 	return colorise(message, "Vendetta", COLORS.client.info);
-};
-const discordLog = (data) =>
-	safeLog(silentLvl === 2 ? data : discordColorise(data));
+}
+function discordLog(message) {
+	return safeLog(silentLvl === 2 ? message : discordColorise(message));
+}
 
-const debuggerColorise = (data) =>
-	colorise(data, "Debugger", COLORS.debugger.info);
-
-const debuggerLog = (data) =>
-	safeLog(silentLvl === 2 ? data : debuggerColorise(data));
-const debuggerError = (err, isReturning) => {
+function debuggerColorise(message) {
+	return colorise(message, "Debugger", COLORS.debugger.info);
+}
+function debuggerLog(message) {
+	safeLog(silentLvl === 2 ? messag : debuggerColorise(message));
+}
+function debuggerWarning(message) {
+	safeLog(colorise(message, "Debugger", COLORS.debugger.warning));
+}
+function debuggerError(error, isReturning) {
 	safeLog(colorise("Error", "Debugger", COLORS.debugger.error));
 	if (isReturning) {
-		return err;
+		return error;
 	}
-	console.error(err);
-};
+	console.error(error);
+}
 
 // Display welcome message and basic instructions
 if (silentLvl < 1)
