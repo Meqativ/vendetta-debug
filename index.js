@@ -64,13 +64,13 @@ const args = parseArgs({
 			type: "string",
 			default: defaults?.clientColor ?? "cyan",
 		},
-		noColors: {
+		noStyle: {
 			type: "boolean",
-			default: defaults?.noColors ?? false,
+			default: defaults?.noStyle ?? false,
 		},
 	},
 });
-if (args.values.noColors) colors.enabled = false;
+if (args.values.noStyle) colors.enabled = false;
 
 if (args?.values.help || args?.values?.h) {
 	let cmdlu;
@@ -113,12 +113,13 @@ if (
 } else {
 	if (client.toLowerCase() === "vendetta") clientColor = "cyan";
 	if (client.toLowerCase() === "enmity") clientColor = "blue";
-	if (client.toLowerCase() === "none") clientColor = "gray";
+	if (client.toLowerCase() === "none" && !clientColor) clientColor = "gray";
+	
 }
 let clientName = args.values.clientName;
 if (!clientName && client.toLowerCase() === "vendetta") clientName = "Vendetta";
 if (client.toLowerCase() === "enmity") clientName = "Enmity";
-if (client.toLowerCase() === "none") clientName = "";
+if (client.toLowerCase() === "none" && !clientName) clientName = "";
 const COLORS = {
 	client: {
 		info: clientColor === "none" ? (t) => t : colors[clientColor],
