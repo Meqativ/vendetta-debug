@@ -30,7 +30,6 @@
 </details>
 
 ## --onConnectedPath __filePath__
-> Default: ""
 > Path to the file with javascript code that will be sent to the client on every connection.
 <details> 
 
@@ -44,6 +43,37 @@ console.log("hai")
 
 </details>
 
+## --client __name__
+> Default: Vendetta
+
+### Available names
+|  option  |   name   | color |         send         |
+| -------- | -------- | ----- | -------------------- |
+| vendetta | Vendetta | cyan  | shows returned value |
+| enmity   | Enmity   | blue  | shows returned value |
+| none     | None     | gray  | raw                  |
+<details> 
+
+<summary> Example </summary>
+
+`node . --client="enmity"`<br/>
+
+</details>
+
+## --clientColor __color__
+> Color of the output prefix
+> Default: cyan
+### Available colors
+https://github.com/doowb/ansi-colors#available-styles
+
+## --clientName __name__
+> Name for the output prefix
+> Default: Vendetta
+### Available colors
+https://github.com/doowb/ansi-colors#available-styles
+
 # Change defaults
 You can change the default values of options by editing `defaults.json`.
-(Note: don't remove the quotes in the number options)
+> **Note**
+> don't remove the quotes in the number options
+> removing the option completely, is like not providing it in the cmd line
