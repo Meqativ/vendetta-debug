@@ -31,9 +31,86 @@ import { parseArgs } from "util";
 import * as fs from "fs/promises";
 import defaults from "./defaults.json" assert { type: "json" };
 
+let isPrompting = false;
+const args = parseArgs({
+	options: {
+		h: {
+			type: "boolean",
+		},
+		help: {
+			type: "boolean",
+		},
+		silent: {
+			type: "string",
+			default: `${defaults?.silent ?? "0"}`,
+		},
+		port: {
+			type: "string",
+			default: `${defaults?.port ?? "9090"}`,
+		},
+		onConnectedPath: {
+			type: "string",
+			default: defaults?.onConnectedPath,
+		},
+		client: {
+			type: "string",
+			default: defaults?.client ?? "Vendetta",
+		},
+		clientName: {
+			type: "string",
+			default: defaults?.clientName ?? "Vendetta",
+		},
+		clientColor: {
+			type: "string",
+			default: defaults?.clientColor ?? "cyan",
+		},
+		noColors: {
+			type: "boolean",
+			default: defaults?.noColors ?? false,
+		},
+	},
+});
+if (args.values.noColors) colors.enabled = false;
+// parse client,, stuff; TODO: decide whether COLORS below args parsing part looks better
+let client = args.values.client;
+const supportedClients = ["enmity", "vendetta", "none"];
+if (!supportedClients.includes(client.toLowerCase())) {
+	throw new Error(
+		`The option "client" has a unsupported client. It should be: ${
+			supportedClients.length === 2
+				? supportedClients.join(" or ")
+				: supportedClients.slice(0, -1).join(", ") +
+				  " or " +
+				  supportedClients.slice(-1)
+		}`
+	);
+}
+let clientColor = args.values.clientColor;
+if (
+	clientColor !== "none" &&
+	!Object.values(colors.keys)
+		.filter((prop) => Array.isArray(prop))
+		.flat()
+		.includes(args.values.clientColor)
+) {
+	throw new Error(`The option "clientColor" has an invalid color`);
+} else {
+	if (client.toLowerCase() === "vendetta") clientColor = "cyan";
+	if (client.toLowerCase() === "enmity") clientColor = "blue";
+	if (client.toLowerCase() === "none") clientColor = "gray";
+	if (clientColor !== "none") clientColor = args.values.clientColor;
+}
+
+
+let clientName = args.values.clientName;
+console.log(clientName, client)
+if (!clientName && client.toLowerCase() === "vendetta")
+	clientName = "Vendetta";
+if (client.toLowerCase() === "enmity") clientName = "Enmity";
+console.log(clientName, client)
 const COLORS = {
 	client: {
-		info: colors.cyan,
+		info: clientColor === "none" ? (t) => t : colors[clientColor],
 		warning: colors.yellow,
 		error: colors.red,
 	},
@@ -43,26 +120,17 @@ const COLORS = {
 		error: colors.red.bold,
 	},
 };
-let isPrompting = false;
-const args = parseArgs({
-	options: {
-		h: { type: "boolean" },
-		silent: { type: "string", default: `${defaults?.silent}` },
-		port: { type: "string", default: `${defaults?.port}` ?? "9090" },
-		onConnectedPath: { type: "string", default: defaults?.onConnectedPath },
-		help: { type: "boolean", default: false },
-	},
-});
+
 if (args?.values.help || args?.values?.h) {
 	let cmdlu;
 	try {
 		cmdlu = (await import("command-line-usage")).default;
-		const { generate } = (await import("./help.js"))
-		console.log(generate(cmdlu))
+		const { generate } = await import("./help.js");
+		console.log(generate(cmdlu));
 	} catch (err) {
 		console.error(
-			"For the help, you need the optional dependencies.\n" +
-				"Install them by executing 'npm i --include=optional' in the folder of the debugger"
+			"Optional dependencies required.\n" +
+				"Install them by executing 'npm i --include=optional' in the vendetta-debug repo folder"
 		);
 	}
 	process.exit(0);
@@ -81,14 +149,15 @@ if (Number.isNaN(wssPort))
 
 const onConnectedPath = args?.values?.onConnectedPath;
 let onConnectedCode = undefined;
-if (typeof onConnectedPath !== "undefined" && onConnectedPath !== "") {
+if (typeof onConnectedPath !== "undefined") {
 	await fs.access(onConnectedPath, fs.constants.R_OK).catch((e) => {
 		console.log(`The path in "onConnectedPath" is not accessible`);
 		console.error(e);
 		process.exit(e.errno);
 	});
 	onConnectedCode = await fs.readFile(onConnectedPath, "utf-8");
-	if (onConnectedCode === "") debuggerWarning(`The file in "onConnectedPath" is empty`);
+	if (onConnectedCode === "")
+		debuggerWarning(`The file in "onConnectedPath" is empty`);
 }
 
 // Utility functions for more visually pleasing logs
@@ -114,7 +183,7 @@ function discordColorise(data) {
 			message = COLORS.client.error(message);
 			break;
 	}
-	return colorise(message, "Vendetta", COLORS.client.info);
+	return colorise(message, clientName, COLORS.client.info);
 }
 function discordLog(message) {
 	return safeLog(silentLvl === 2 ? message : discordColorise(message));
@@ -124,7 +193,7 @@ function debuggerColorise(message) {
 	return colorise(message, "Debugger", COLORS.debugger.info);
 }
 function debuggerLog(message) {
-	safeLog(silentLvl === 2 ? messag : debuggerColorise(message));
+	safeLog(silentLvl === 2 ? message : debuggerColorise(message));
 }
 function debuggerWarning(message) {
 	safeLog(colorise(message, "Debugger", COLORS.debugger.warning));
@@ -140,7 +209,7 @@ function debuggerError(error, isReturning) {
 // Display welcome message and basic instructions
 if (silentLvl < 1)
 	console.log(
-		"Welcome to the unofficial Vendetta debugger.\n" +
+		colors.bold("👉 Welcome to the debugger.\n") +
 			"Press Ctrl+C to exit.\n" +
 			"How to connect to the debugger: https://github.com/Meqativ/vendetta-debug/blob/master/README.md#connecting"
 	);
@@ -176,17 +245,23 @@ wss.on("connection", (ws) => {
 
 	// Create the REPL
 	const rl = repl.start({
-		eval: (input, ctx, filename, cb) => {
+		eval: (inputRaw, ctx, filename, cb) => {
 			try {
-				if (!input.trim()) {
+				if (!inputRaw.trim()) {
 					cb();
 				} else {
 					isPrompting = false;
-					ws.send(
-						`const res=(0, eval)(${JSON.stringify(
-							input
-						)});let out=vendetta.metro.findByProps("inspect").inspect(res,{showHidden:true});if(out!=="undefined")console.log(out);res`
-					); // Logs out the returned value
+					let input = inputRaw;
+					if (client.toLowerCase() === "vendetta") {
+						input = `const res=(0, eval)(${JSON.stringify(
+							inputRaw
+						)});let out=vendetta.metro.findByProps("inspect").inspect(res,{showHidden:true});if(out!=="undefined")console.log(out);res`;
+					} else if (client.toLowerCase() === "enmity") {
+						input = `const res=(0, eval)(${JSON.stringify(
+							inputRaw
+						)});console.log(enmity.modules.getByProps("inspect").inspect(res,{showHidden:true}));if(res!=="undefined")console.log(res);res`;
+					}
+					ws.send(input);
 					finishCallback = cb;
 				}
 			} catch (e) {

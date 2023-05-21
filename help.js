@@ -37,6 +37,37 @@ export function generate(cmdlu) {
 					description:
 						"Path to the file with javascript code, that will be sent to the client on every connection",
 				},
+				{
+					name: "client", 
+					typeLabel: "{underline name} (string)",
+					type: String,
+					description: "Client name for which to adapt the debugger.\n"+
+					"Available choices: Vendetta, Enmity and None\n\n"+
+					"Client: clientName; clientColor; functionality.\n"
+					"Vendetta: Vendetta; cyan; shows returned value. (default)\n"+
+					"Enmity: Enmity; blue; shows returned value.\n"
+					"None: Client; no color; raw send"
+				},
+				{
+					name: "clientColor",
+					typeLabel: "{underline color} (string)",
+					type: String,
+					description: "Color of the output prefix.\n"+
+					"Default: cyan\n"+
+					"Available colors: https://github.com/doowb/ansi-colors#available-styles"
+				},
+				{
+					name: "clientName",
+					typeLabel: "{underline name} (string)",
+					type: String,
+					description: "Name for the output prefix.\n"+
+					"Default: Vendetta\n"
+				},
+				{
+					name: "noColor",
+					type: Boolean,
+					description: `Don't send colors at all (doesn't apply to "help")`
+				}
 			],
 		},
 	]);
