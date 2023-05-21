@@ -1,6 +1,6 @@
 # Vendetta Debugger
 
-A fork of @colin273/enmity-debugger, which is now a remote debugger for [Vendetta](https://github.com/vendetta-mod) and other mods. This connects over a websocket to the Discord app with a supported mod installed and allows you to execute JavaScript in the Discord app from the command line. The REPL in this debugger is a slightly modified version of the [default REPL in Node.js](https://nodejs.org/api/repl.html), including the same commands and some support for multi-line code snippets.
+A remote debugger for [Vendetta](https://github.com/vendetta-mod) and other mods, forked from [@colin273/enmity-debugger](https://github.com/colin273/enmity-debug). This connects over a websocket to the Discord app with a supported mod installed and allows you to execute JavaScript in the Discord app from the command line. The REPL in this debugger is a slightly modified version of the [default REPL in Node.js](https://nodejs.org/api/repl.html), including the same commands and some support for multi-line code snippets.
 
 ## Installing
 
