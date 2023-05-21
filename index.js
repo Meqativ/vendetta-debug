@@ -71,6 +71,22 @@ const args = parseArgs({
 	},
 });
 if (args.values.noColors) colors.enabled = false;
+
+if (args?.values.help || args?.values?.h) {
+	let cmdlu;
+	try {
+		cmdlu = (await import("command-line-usage")).default;
+		const { generate } = await import("./help.js");
+		console.log(generate(cmdlu));
+	} catch (err) {
+		console.error(err);
+		console.error(
+			"Optional dependencies required.\n" +
+				"Install them by executing 'npm i --include=optional' in the vendetta-debug repo folder"
+		);
+	}
+	process.exit(0);
+}
 // parse client,, stuff; TODO: decide whether COLORS below args parsing part looks better
 let client = args.values.client;
 const supportedClients = ["enmity", "vendetta", "none"];
@@ -101,13 +117,9 @@ if (
 	if (clientColor !== "none") clientColor = args.values.clientColor;
 }
 
-
 let clientName = args.values.clientName;
-console.log(clientName, client)
-if (!clientName && client.toLowerCase() === "vendetta")
-	clientName = "Vendetta";
+if (!clientName && client.toLowerCase() === "vendetta") clientName = "Vendetta";
 if (client.toLowerCase() === "enmity") clientName = "Enmity";
-console.log(clientName, client)
 const COLORS = {
 	client: {
 		info: clientColor === "none" ? (t) => t : colors[clientColor],
@@ -120,21 +132,6 @@ const COLORS = {
 		error: colors.red.bold,
 	},
 };
-
-if (args?.values.help || args?.values?.h) {
-	let cmdlu;
-	try {
-		cmdlu = (await import("command-line-usage")).default;
-		const { generate } = await import("./help.js");
-		console.log(generate(cmdlu));
-	} catch (err) {
-		console.error(
-			"Optional dependencies required.\n" +
-				"Install them by executing 'npm i --include=optional' in the vendetta-debug repo folder"
-		);
-	}
-	process.exit(0);
-}
 
 // Parse arguments
 const silentLvl = Number(args?.values?.silent ?? 0);
