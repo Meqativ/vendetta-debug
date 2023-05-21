@@ -42,18 +42,14 @@ export function generate(cmdlu) {
 					typeLabel: "{underline name} (string)",
 					type: String,
 					description: "Client name for which to adapt the debugger.\n"+
-					"Available choices: Vendetta, Enmity and None\n\n"+
-					"Client: clientName; clientColor; functionality.\n"
-					"Vendetta: Vendetta; cyan; shows returned value. (default)\n"+
-					"Enmity: Enmity; blue; shows returned value.\n"
-					"None: Client; no color; raw send"
+					"Available choices: Vendetta, Enmity and None"+
 				},
 				{
 					name: "clientColor",
 					typeLabel: "{underline color} (string)",
 					type: String,
 					description: "Color of the output prefix.\n"+
-					"Default: cyan\n"+
+					"Default: cyan (inherit from client)\n"+
 					"Available colors: https://github.com/doowb/ansi-colors#available-styles"
 				},
 				{
@@ -61,7 +57,7 @@ export function generate(cmdlu) {
 					typeLabel: "{underline name} (string)",
 					type: String,
 					description: "Name for the output prefix.\n"+
-					"Default: Vendetta\n"
+					"Default: Vendetta (inherit from client)"
 				},
 				{
 					name: "noColor",
