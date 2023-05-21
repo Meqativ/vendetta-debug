@@ -44,7 +44,7 @@ console.log("hai")
 </details>
 
 ## --client __name__
-> Default: Vendetta
+> Default: Vendetta<br/>
 
 ### Available names
 |  option  |   name   | color |         send         |
@@ -61,14 +61,16 @@ console.log("hai")
 </details>
 
 ## --clientColor __color__
-> Color of the output prefix
-> Default: cyan
+> Color of the output prefix<br/>
+> Default: cyan (inherit from client)
+
 ### Available colors
 https://github.com/doowb/ansi-colors#available-styles
 
 ## --clientName __name__
-> Name for the output prefix
-> Default: Vendetta
+> Name for the output prefix<br/>
+> Default: Vendetta (inherit from client)
+
 ### Available colors
 https://github.com/doowb/ansi-colors#available-styles
 
