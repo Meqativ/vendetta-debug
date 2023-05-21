@@ -114,12 +114,11 @@ if (
 	if (client.toLowerCase() === "vendetta") clientColor = "cyan";
 	if (client.toLowerCase() === "enmity") clientColor = "blue";
 	if (client.toLowerCase() === "none") clientColor = "gray";
-	if (clientColor !== "none") clientColor = args.values.clientColor;
 }
-
 let clientName = args.values.clientName;
 if (!clientName && client.toLowerCase() === "vendetta") clientName = "Vendetta";
 if (client.toLowerCase() === "enmity") clientName = "Enmity";
+if (client.toLowerCase() === "none") clientName = "";
 const COLORS = {
 	client: {
 		info: clientColor === "none" ? (t) => t : colors[clientColor],
