@@ -101,9 +101,9 @@ if (!supportedClients.includes(client.toLowerCase())) {
 		}`
 	);
 }
-let clientColor = args.values.clientColor;
+let clientColor;
 if (
-	clientColor !== "none" &&
+	args.values.clientColor !== "none" &&
 	!Object.values(colors.keys)
 		.filter((prop) => Array.isArray(prop))
 		.flat()
@@ -113,13 +113,12 @@ if (
 } else {
 	if (client.toLowerCase() === "vendetta") clientColor = "cyan";
 	if (client.toLowerCase() === "enmity") clientColor = "blue";
-	if (client.toLowerCase() === "none" && !clientColor) clientColor = "gray";
-	
+	clientColor = args.values.clientColor;	
 }
-let clientName = args.values.clientName;
-if (!clientName && client.toLowerCase() === "vendetta") clientName = "Vendetta";
+let clientName;
+if (client.toLowerCase() === "vendetta") clientName = "Vendetta";
 if (client.toLowerCase() === "enmity") clientName = "Enmity";
-if (client.toLowerCase() === "none" && !clientName) clientName = "";
+clientName = args.values.clientName
 const COLORS = {
 	client: {
 		info: clientColor === "none" ? (t) => t : colors[clientColor],
@@ -206,7 +205,7 @@ function debuggerError(error, isReturning) {
 // Display welcome message and basic instructions
 if (silentLvl < 1)
 	console.log(
-		colors.bold("👉 Welcome to the debugger.\n") +
+		colors.bold(`👉 Welcome to the debugger. (${client}; ${COLORS.client.info(clientName)})\n`) +
 			"Press Ctrl+C to exit.\n" +
 			"How to connect to the debugger: https://github.com/Meqativ/vendetta-debug/blob/master/README.md#connecting"
 	);
