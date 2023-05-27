@@ -60,7 +60,7 @@ You can use an option in the devkitplus ([Direct](https://vd-plugins.github.io/p
 0. Install the plugin
 1. Open the plugin's settings
 2. Enable "Auto debugger"
-(You need to fill in the ["Debugger URL"](https://github.com/Meqativ/vendetta-debug/blob/master/README.md#:~:text=Fill%20in%20your%20Debug%20URL) for it to connect properly)
+(You need to fill in the ["Debugger URL"](https://github.com/Meqativ/vendetta-debug#:~:text=Fill%20in%20your%20Debug%20URL) for it to connect properly)
 
 ## Quitting
 
