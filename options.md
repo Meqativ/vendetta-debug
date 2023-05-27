@@ -43,10 +43,10 @@ console.log("hai")
 
 </details>
 
-## --client __name__
+## --client __option__
 > Default: Vendetta<br/>
 
-### Available names
+### Available options
 |  option  |   name   | color |         send         |
 | -------- | -------- | ----- | -------------------- |
 | vendetta | Vendetta | cyan  | shows returned value |
