@@ -276,7 +276,7 @@ wss.on("connection", (ws) => {
         : discordColorise(data);
     },
   });
-  rl.setupHistory("./replHistory", (err, repl) => {
+  rl.setupHistory("./.vendetta-debugReplHistory", (err, repl) => {
     if (err) return debuggerError(err);
     if (silentLvl < 2) debuggerLog("Prompt history loaded");
   });
