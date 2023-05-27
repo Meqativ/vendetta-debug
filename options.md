@@ -74,5 +74,4 @@ https://github.com/doowb/ansi-colors#available-styles
 # Change defaults
 You can change the default values of options by editing `defaults.json`.
 > **Note**
-> don't remove the quotes in the number options
-> removing the option completely, is like not providing it in the cmd line
+> it applies everywhere
