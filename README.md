@@ -48,7 +48,7 @@ For help on the options, `--help` or [look here](options.md).
 
 1. Open the Developer page
 ![A screenshot with highlights for step 2](readmeAssets/Developer.png)
-2. Fill in your Debug URL
+2. Fill in your Debugger URL
 3. Locate and press the "Connect to debug websocket" button
 ![A screenshot with highlights for steps 2 & 3](readmeAssets/URL_and_connect.png)
 4. :tada: It should connect now and show this in your console
