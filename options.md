@@ -71,9 +71,6 @@ https://github.com/doowb/ansi-colors#available-styles
 > Name for the output prefix<br/>
 > Default: Vendetta (inherit from client)
 
-### Available colors
-https://github.com/doowb/ansi-colors#available-styles
-
 # Change defaults
 You can change the default values of options by editing `defaults.json`.
 > **Note**
