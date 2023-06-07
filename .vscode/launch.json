@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "Debug Websocket",
+            "program": "${workspaceFolder}/index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "console": "integratedTerminal"
+        }
+    ]
+}
